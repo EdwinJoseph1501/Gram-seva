@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#176b52">
+  <title>Gram Seva | Grievance Portal</title>
+  <link rel="manifest" href="manifest.json">
+  <script>
+    (function () {
+      const saved = localStorage.getItem("gram-seva-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = saved || (prefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <p class="eyebrow" data-i18n="eyebrow">COMMUNITY SERVICES</p>
+      <div class="header-actions">
+        <!-- Online/Offline Connection Status Badge -->
+        <div id="online-status-badge" class="online-status-badge online" role="status" aria-live="polite">
+          <span class="status-dot"></span>
+          <span id="online-status-text" data-i18n="statusOnline">Online</span>
+        </div>
+
+        <!-- PWA Install Button -->
+        <button id="pwa-install-btn" class="theme-toggle-btn install-btn" type="button" style="display: none;" aria-label="Install Gram Seva App">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span id="install-btn-text" data-i18n="btnInstallApp">Install App</span>
+        </button>
+
+        <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+          <svg id="theme-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+          <span id="theme-toggle-text">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+    <h1 data-i18n="title">Gram Seva</h1>
+    <p data-i18n="subtitle">Report a local problem. Help improve your village.</p>
+  </header>
+
+  <main>
+    <!-- Left Column: Location Details & Submit Complaint -->
+    <div class="app-column">
+      <!-- Standalone Panel 1: Location & Region Selection -->
+      <section class="panel">
+        <h2 data-i18n="locationTitle">Village & Region Details</h2>
+        <p class="muted" data-i18n="locationSub">Set your state, district, block, and village ward.</p>
+
+        <form id="location-form">
+          <div class="location-grid">
+            <div>
+              <label for="state" data-i18n="stateLabel">State / UT</label>
+              <select id="state" name="state" required>
+                <option value="" data-i18n="selectState">Select State</option>
+              </select>
+            </div>
+            <div>
+              <label for="district" data-i18n="districtLabel">District</label>
+              <select id="district" name="district" required disabled>
+                <option value="" data-i18n="selectDistrict">Select District</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="location-grid">
+            <div>
+              <label for="block" data-i18n="blockLabel">Block / Taluk</label>
+              <input id="block" name="block" required placeholder="e.g. Taluk / Block">
+            </div>
+            <div>
+              <label for="panchayat" data-i18n="panchayatLabel">Gram Panchayat / Village</label>
+              <input id="panchayat" name="panchayat" required placeholder="e.g. Village Name">
+            </div>
+          </div>
+
+          <div class="location-grid">
+            <div>
+              <label for="ward" data-i18n="wardLabel">Ward / Habitation number</label>
+              <input id="ward" name="ward" required placeholder="e.g. Ward No. 4">
+            </div>
+            <div>
+              <label for="language-select" data-i18n="langLabel">Preferred Language</label>
+              <select id="language-select" aria-label="Select Language">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="mr">मराठी (Marathi)</option>
+                <option value="bn">বাংলা (Bengali)</option>
+                <option value="gu">ગુજરાતી (Gujarati)</option>
+                <option value="ml">മലയാളം (Malayalam)</option>
+                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="lang-rec-badge" class="lang-rec-badge" style="display: none;"></div>
+
+          <button type="button" id="detect-location-btn" class="detect-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span data-i18n="btnDetect">Detect my location</span>
+          </button>
+          <p id="location-status" class="location-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <!-- Standalone Panel 2: Submit Complaint -->
+      <section class="panel">
+        <h2 data-i18n="formTitle">Submit a complaint</h2>
+        <p class="muted" data-i18n="formSub">Your complaint will be saved on this device.</p>
+
+        <form id="complaint-form">
+          <div>
+            <label for="name" data-i18n="nameLabel">Your name</label>
+            <input id="name" name="name" required placeholder="Enter full name">
+          </div>
+
+          <div>
+            <label for="category" data-i18n="categoryLabel">Complaint category</label>
+            <select id="category" name="category" required>
+              <option value="" data-i18n="chooseCategory">Choose a category</option>
+              <option value="Water" data-i18n="catWater">Water supply & Tanker</option>
+              <option value="Electricity" data-i18n="catElectricity">Street lights / Electricity</option>
+              <option value="Road" data-i18n="catRoad">Road & Pathway damage</option>
+              <option value="Waste" data-i18n="catWaste">Sanitation & Waste management</option>
+              <option value="Health" data-i18n="catHealth">Health center / Anganwadi</option>
+              <option value="Agriculture" data-i18n="catAgriculture">Irrigation & Canals</option>
+              <option value="Other" data-i18n="catOther">Other village issue</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="description" data-i18n="descLabel">Describe the problem</label>
+            <textarea id="description" name="description" rows="3" required placeholder="Provide details..."></textarea>
+          </div>
+
+          <div>
+            <label for="photo" data-i18n="photoLabel">Attach Photo (Optional)</label>
+            <div class="photo-upload-box">
+              <input type="file" id="photo" name="photo" accept="image/*" capture="environment">
+              <div id="photo-preview-container" class="photo-preview-container" style="display: none;">
+                <img id="photo-preview-img" src="" alt="Complaint photo preview">
+                <button type="button" id="remove-photo-btn" class="remove-photo-btn" aria-label="Remove photo">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="submit-btn" data-i18n="btnSubmit">Submit complaint</button>
+          <p id="message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+
+    <!-- Right Column: Panchayat Analytics & Complaints Feed -->
+    <div class="app-column">
+      <!-- Standalone Panel 3: Panchayat Analytics Dashboard -->
+      <section class="panel analytics-panel">
+        <div class="panel-header-flex">
+          <div>
+            <h2 data-i18n="analyticsTitle">Panchayat Analytics Dashboard</h2>
+            <p class="muted" data-i18n="analyticsSub">Grievance statistics calculated from local records on this device.</p>
+          </div>
+        </div>
+
+        <!-- Summary Metrics Grid -->
+        <div class="analytics-metrics-grid">
+          <div class="metric-card">
+            <span class="metric-number" id="metric-total">0</span>
+            <span class="metric-label" data-i18n="metricTotal">Total Grievances</span>
+          </div>
+          <div class="metric-card pending">
+            <span class="metric-number" id="metric-pending">0</span>
+            <span class="metric-label" data-i18n="statusPending">Pending</span>
+          </div>
+          <div class="metric-card in-progress">
+            <span class="metric-number" id="metric-in-progress">0</span>
+            <span class="metric-label" data-i18n="statusInProgress">In Progress</span>
+          </div>
+          <div class="metric-card resolved">
+            <span class="metric-number" id="metric-resolved">0</span>
+            <span class="metric-label" data-i18n="statusResolved">Resolved</span>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="analytics-charts-grid">
+          <div class="chart-card">
+            <h3 data-i18n="chartStatusTitle">Status Breakdown</h3>
+            <div id="status-donut-container" class="chart-box"></div>
+          </div>
+          <div class="chart-card">
+            <h3 data-i18n="chartCategoryTitle">Category Breakdown</h3>
+            <div id="category-bars-container" class="chart-box"></div>
+          </div>
+        </div>
+
+        <div class="local-status-disclaimer" style="margin-top: 14px;">
+          ℹ️ <span data-i18n="analyticsDisclaimer">Statistics for complaints stored on this device (Offline-first)</span>
+        </div>
+      </section>
+
+      <!-- Standalone Panel 4: Complaints List -->
+      <section class="panel">
+        <div class="panel-header-flex">
+          <div>
+            <h2 data-i18n="listTitle">Complaints on this device</h2>
+            <p class="muted" data-i18n="formSub">Search, filter, update status, or export backup files.</p>
+          </div>
+          <div class="backup-actions">
+            <button type="button" id="export-backup-btn" class="secondary-btn" data-i18n="btnExportBackup">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span data-i18n="btnExportBackup">Export Backup</span>
+            </button>
+            <button type="button" id="import-backup-trigger-btn" class="secondary-btn" data-i18n="btnImportBackup">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span data-i18n="btnImportBackup">Import Backup</span>
+            </button>
+            <input type="file" id="import-backup-input" accept=".json" style="display: none;">
+          </div>
+        </div>
+
+        <p id="backup-status" role="status" aria-live="polite" class="location-status" style="margin-bottom: 12px;"></p>
+
+        <!-- Search & Filter Controls Toolbar -->
+        <div class="complaints-toolbar">
+          <div class="search-box">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" id="search-input" placeholder="Search by ID, name, description, location..." data-i18n-placeholder="searchPlaceholder" aria-label="Search complaints">
+          </div>
+          <div class="filter-controls">
+            <select id="filter-status" aria-label="Filter by status">
+              <option value="" data-i18n="filterStatus">All Statuses</option>
+              <option value="Pending" data-i18n="statusPending">Pending</option>
+              <option value="In Progress" data-i18n="statusInProgress">In Progress</option>
+              <option value="Resolved" data-i18n="statusResolved">Resolved</option>
+            </select>
+
+            <select id="filter-category" aria-label="Filter by category">
+              <option value="" data-i18n="filterCategory">All Categories</option>
+              <option value="Water" data-i18n="catWater">Water supply & Tanker</option>
+              <option value="Electricity" data-i18n="catElectricity">Street lights / Electricity</option>
+              <option value="Road" data-i18n="catRoad">Road & Pathway damage</option>
+              <option value="Waste" data-i18n="catWaste">Sanitation & Waste management</option>
+              <option value="Health" data-i18n="catHealth">Health center / Anganwadi</option>
+              <option value="Agriculture" data-i18n="catAgriculture">Irrigation & Canals</option>
+              <option value="Other" data-i18n="catOther">Other village issue</option>
+            </select>
+
+            <button type="button" id="clear-filters-btn" class="clear-filters-btn" data-i18n="btnClearFilters">Clear filters</button>
+          </div>
+        </div>
+
+        <div id="complaint-list" role="region" aria-live="polite">
+          <p class="muted" data-i18n="noComplaints">No complaints submitted yet.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Accessible Complaint Detail View Modal -->
+  <div id="complaint-detail-modal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="detail-modal-title" data-i18n="detailTitle">Complaint Details</h2>
+        <button type="button" class="modal-close-btn" id="close-detail-x-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div id="modal-detail-body" class="modal-body">
+        <!-- Dynamically rendered detail content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="close-detail-modal-btn" class="secondary-btn" data-i18n="btnClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accessible Confirmation Delete Modal -->
+  <div id="confirm-delete-modal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="confirm-delete-title">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <h2 id="confirm-delete-title" data-i18n="confirmDeleteTitle">Delete Complaint</h2>
+        <button type="button" class="modal-close-btn" id="close-delete-x-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="delete-modal-msg" data-i18n="confirmDeleteMsg">Are you sure you want to delete this complaint? This cannot be undone.</p>
+        <p id="delete-modal-target-id" class="muted" style="font-size: 12px; font-weight: 700; margin-top: 8px;"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="cancel-delete-btn" class="secondary-btn" data-i18n="btnCancel">Cancel</button>
+        <button type="button" id="execute-delete-btn" class="danger-btn" data-i18n="btnConfirmDelete">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span data-i18n="footerText">Gram Seva · Empowering Rural Communities</span>
+  </footer>
+</body>
+</html>

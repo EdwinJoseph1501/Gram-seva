@@ -4,7 +4,6 @@
 [![Offline First](https://img.shields.io/badge/Offline--First-Service_Worker-25a380.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 [![Languages](https://img.shields.io/badge/Languages-10_Indian_Languages-d97706.svg)](#-10-regional-indian-languages)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero_Vanilla_JS-blue.svg)](#-technology-stack)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > **Live Application**: [https://edwinjoseph1501.github.io/Gram-seva/](https://edwinjoseph1501.github.io/Gram-seva/)  
 > **Target Audience**: Rural Indian Citizens, Gram Panchayats, Village Volunteers & Common Service Centers (CSCs).
@@ -162,8 +161,3 @@ gram-seva/
 * **Cost Efficiency:**  
   Zero server hosting fees, zero external API costs, zero database maintenance overhead.
 
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE) — free to use, modify, and distribute for civic and educational purposes.

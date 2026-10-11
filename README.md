@@ -149,18 +149,7 @@ gram-seva/
 3. **Open in browser**:
    Navigate to `http://localhost:8080` in your web browser.
 
----
 
-## 🌐 Deploying to GitHub Pages
-
-1. Navigate to your repository on GitHub: `https://github.com/EdwinJoseph1501/Gram-seva`
-2. Click **Settings** → **Pages** (under the "Code and automation" section).
-3. Under **Branch**, select `main` and set the folder to `/ (root)`.
-4. Click **Save**.
-5. Your live Progressive Web App will be accessible at:
-   ```
-   https://<your-username>.github.io/Gram-seva/
-   ```
 
 ---
 
